@@ -1,254 +1,101 @@
-🚀 DOCUMENTAÇÃO COMPLETA – RAITÔ CORP API
-Endpoints + Parâmetros + Bodies de Exemplo + Regras por Operação
-📦 1. CATÁLOGO
-⭐ 1.1 PRODUTOS
-📌 POST /api/produtos/criar
-Body (JSON)
-{
-  "nome": "Lâmpada LED 9W",
-  "descricao": "Alta eficiência energética",
-  "preco": 29.90,
-  "ativo": true
-}
+# Raitô Corp API
 
-Response
-{
-  "id": "UUID",
-  "nome": "Lâmpada LED 9W",
-  "descricao": "Alta eficiência energética",
-  "preco": 29.9,
-  "ativo": true,
-  "criadoEm": "2025-11-16T..."
-}
+Bem-vindo ao repositório oficial da API **Raitô Corp**. Este projeto é uma API RESTful desenvolvida com Spring Boot para gerenciar o ecossistema de e-commerce da Raitô Corp, incluindo catálogo de produtos, estoque, vendas e cadastro de usuários.
 
-📌 GET /api/produtos
+## 📋 Sumário
+- [Descrição](#-descrição)
+- [Tecnologias Utilizadas](#-tecnologias-utilizadas)
+- [Pré-requisitos](#-pré-requisitos)
+- [Instalação e Configuração](#-instalação-e-configuração)
+- [Como Rodar](#-como-rodar)
+- [Documentação da API](#-documentação-da-api)
+- [Estrutura do Projeto](#-estrutura-do-projeto)
 
-Sem parâmetros.
+---
 
-📌 GET /api/produtos/{idProduto}
-📌 PUT /api/produtos/{idProduto}
-Body parcial permitido:
-{
-  "nome": "Novo Nome",
-  "preco": 45.00,
-  "ativo": false
-}
+## 📖 Descrição
 
-📌 DELETE /api/produtos/{idProduto}
-⭐ 1.2 CATEGORIAS
-📌 POST /api/categorias/criar
-Body:
-{
-  "nome": "Luminárias",
-  "descricao": "Produtos do tipo luminária"
-}
+O sistema Raitô Corp é uma solução robusta para gerenciamento de lojas virtuais, focada em produtos de iluminação. A API fornece serviços para:
 
-📌 GET /api/categorias
-⭐ 1.3 CARACTERÍSTICAS DE ILUMINAÇÃO
-📌 POST /api/iluminacao/produto/{idProduto}
-Parâmetros Query (todos obrigatórios, exceto os marcados)
-Nome	Tipo	Obrigatório
-potencia	String	✔
-temperaturaCor	String	✔
-fluxoLuminoso	String	✔
-tensao	String	opcional
-eficiencia	String	opcional
-indiceProtecao	String	opcional
-regulavel	boolean	default=false
-Exemplo:
-POST /api/iluminacao/produto/UUID?potencia=9W&temperaturaCor=3000K&fluxoLuminoso=900lm&tensao=Bivolt&eficiencia=90lm%2FW&indiceProtecao=IP20&regulavel=true
+*   **Catálogo**: Gestão de produtos, categorias, características técnicas (iluminação), imagens e modelos 3D.
+*   **Estoque**: Controle de entrada, saída, reserva e atualização de inventário.
+*   **Vendas**: Gerenciamento de carrinhos de compras e processamento de pedidos.
+*   **Cadastro**: Gestão completa de usuários, clientes, endereços e perfis de acesso (RBAC).
 
-Response:
-{
-  "id": "UUID",
-  "potencia": "9W",
-  "temperaturaCor": "3000K",
-  "fluxoLuminoso": "900lm",
-  "tensao": "Bivolt",
-  "eficiencia": "90lm/W",
-  "indiceProtecao": "IP20",
-  "regulavel": true
-}
+## 🚀 Tecnologias Utilizadas
 
-📌 GET /api/iluminacao/produto/{idProduto}
-📌 PUT /api/iluminacao/{idCaracteristica}
-Body parcial permitido:
-{
-  "tensao": "127V",
-  "fluxoLuminoso": "1000lm",
-  "regulavel": true
-}
+*   **Java 21**: Linguagem de programação.
+*   **Spring Boot 3.5.6**: Framework principal.
+*   **Spring Data JPA**: Camada de persistência.
+*   **PostgreSQL**: Banco de dados relacional.
+*   **Maven**: Gerenciador de dependências e build.
+*   **Docker**: Containerização (opcional, mas recomendado).
 
-⭐ 1.4 IMAGENS
-📌 POST /api/imagens/produto/{idProduto}/upload
-Form-Data:
-campo	tipo
-imagem	file(.png/.jpg/.jpeg)
-principal	boolean
-📌 GET /api/imagens/produto/{idProduto}
-📦 2. ESTOQUE
-⭐ 2.1 Adicionar produto ao estoque
-POST /api/estoque/adicionar?idProduto={UUID}&quantidade=10
+## 🛠 Pré-requisitos
 
-⭐ 2.2 Atualizar quantidade
-PUT /api/estoque/atualizar?idProduto={UUID}&quantidade=50
+Antes de começar, você precisará ter instalado em sua máquina:
 
-⭐ 2.3 Reservar
-PUT /api/estoque/reservar?idProduto={UUID}&quantidade=3
+*   [Java JDK 21](https://www.oracle.com/java/technologies/downloads/#java21)
+*   [Maven](https://maven.apache.org/download.cgi)
+*   [PostgreSQL](https://www.postgresql.org/download/) (ou Docker para rodar o banco em container)
 
-⭐ 2.4 Liberar reserva
-PUT /api/estoque/liberar?idProduto={UUID}&quantidade=2
+## ⚙️ Instalação e Configuração
 
-⭐ 2.5 Movimentar saída
-PUT /api/estoque/saida?idProduto={UUID}&quantidade=1
+1.  **Clone o repositório:**
+    ```bash
+    git clone https://github.com/seu-usuario/RaitoCorp.git
+    cd RaitoCorp
+    ```
 
-⭐ 2.6 Listar estoque
-GET /api/estoque
+2.  **Configuração do Banco de Dados:**
+    Crie um banco de dados PostgreSQL chamado `raito_db`.
 
-⭐ 2.7 Buscar estoque por produto
-GET /api/estoque/{idProduto}
+    Se estiver usando Docker, você pode subir um container rapidamente:
+    ```bash
+    docker run --name raito-postgres -e POSTGRES_PASSWORD=12345 -e POSTGRES_DB=raito_db -p 5432:5432 -d postgres
+    ```
 
-📦 3. VENDAS
-⭐ 3.1 CARRINHO
-Criar carrinho
-POST /api/carrinho/criar?idCliente={UUID}
+3.  **Configuração da Aplicação:**
+    Verifique o arquivo `src/main/resources/application.properties`. As configurações padrão são:
+    ```properties
+    spring.datasource.url=jdbc:postgresql://localhost:5432/raito_db
+    spring.datasource.username=postgres
+    spring.datasource.password=12345
+    server.port=8081
+    ```
+    Ajuste conforme necessário para o seu ambiente.
 
-Response:
-{
- "idCarrinho": "UUID",
- "idCliente": "UUID",
- "itens": []
-}
+## ▶️ Como Rodar
 
-Listar itens do carrinho
-GET /api/carrinho/{idCarrinho}/itens
+Para executar a aplicação via terminal usando Maven:
 
-Adicionar item
-POST /api/carrinho/{idCarrinho}/adicionar?idProduto={UUID}&quantidade=2&preco=59.90
+```bash
+# Linux/macOS
+./mvnw spring-boot:run
 
-Remover item
-DELETE /api/carrinho/{idCarrinho}/remover/{idProduto}
+# Windows
+mvnw.cmd spring-boot:run
+```
 
-Limpar carrinho
-DELETE /api/carrinho/{idCarrinho}/limpar
+A aplicação estará acessível em `http://localhost:8081`.
 
-Calcular total
-GET /api/carrinho/{idCarrinho}/total
+## 📚 Documentação da API
 
-⭐ 3.2 PEDIDOS
-Finalizar pedido
-POST /api/pedidos/finalizar?idCliente={UUID}&idCarrinho={UUID}&idEnderecoEntrega={UUID}
+A documentação detalhada de todos os endpoints, incluindo parâmetros e exemplos de requisição/resposta, foi movida para um arquivo dedicado para manter este README limpo.
 
-Response
-{
-  "idPedido": "UUID",
-  "idCliente": "UUID",
-  "valorTotal": 199.80,
-  "status": "PENDENTE",
-  "itens": [
-    {
-      "idProduto": "UUID",
-      "quantidade": 2,
-      "precoUnitario": 99.90
-    }
-  ]
-}
+👉 **[Acesse a Referência da API (API_REFERENCE.md)](API_REFERENCE.md)**
 
-Buscar pedido
-GET /api/pedidos/{idPedido}
+## 📂 Estrutura do Projeto
 
-Listar pedidos do cliente
-GET /api/pedidos/cliente/{idCliente}
+A arquitetura do projeto segue uma divisão modular dentro do pacote `com.projetoIntegrador.RaitoCorp`:
 
-Atualizar status
-PUT /api/pedidos/{idPedido}/status?status=ENVIADO
+*   `admin`: Funcionalidades administrativas.
+*   `cadastro`: Gestão de Usuários, Clientes, Endereços, Credenciais e Perfis.
+*   `catalogo`: Produtos, Categorias, Imagens, Características de Iluminação e Modelos 3D.
+*   `estoque`: Controle de inventário.
+*   `vendas`: Carrinho de compras e Pedidos.
 
-📦 4. CADASTRO
-⭐ 4.1 USUÁRIOS
-Criar usuário
-POST /api/usuarios/criar
+Cada módulo possui suas camadas de `controller`, `service`, `repository`, `model` e `dto`.
 
-Body:
-{
-  "nome": "Emerson",
-  "sobrenome": "Araújo",
-  "tipoUsuario": "cliente"
-}
-
-Listar usuários
-GET /api/usuarios/listar
-
-Buscar por ID
-GET /api/usuarios/{id}
-
-Deletar usuário
-DELETE /api/usuarios/{id}
-
-⭐ 4.2 CREDENCIAIS
-Criar
-POST /api/credenciais/criar
-
-Body:
-{
-  "idUsuario": "UUID",
-  "email": "teste@teste.com",
-  "senhaHash": "123456"
-}
-
-Login
-POST /api/credenciais/login?email=teste@teste.com&senha=123456
-
-⭐ 4.3 CLIENTES
-Criar cliente
-POST /api/clientes/criar
-
-Body:
-{
-  "idUsuario": "UUID",
-  "cpf": "12345678901",
-  "data_nascimento": "1999-05-10",
-  "celular": "62999999999"
-}
-
-Buscar por CPF
-GET /api/clientes/cpf/{cpf}
-
-⭐ 4.4 ENDEREÇOS
-Criar
-POST /api/enderecos/criar
-
-Body:
-{
-  "idCliente": "UUID",
-  "cep": "74000000",
-  "rua": "Av. Goiás",
-  "numero": "120",
-  "complemento": "Qd 05 Lt 10",
-  "bairro": "Centro",
-  "cidade": "Goiânia",
-  "estado": "GO",
-  "enderecoPrincipal": true
-}
-
-⭐ 4.5 PERFIS DE ACESSO
-Criar
-POST /api/perfis
-
-Body:
-{
-  "nome": "ADMIN",
-  "descricao": "Acesso total ao sistema"
-}
-
-⭐ 4.6 USUÁRIOS ⇄ PERFIS
-Atribuir perfil
-POST /api/usuarios-perfis/atribuir?idUsuario={UUID}&idPerfil={UUID}
-
-Remover
-DELETE /api/usuarios-perfis/remover?idUsuario={UUID}&idPerfil={UUID}
-
-Listar perfis do usuário
-GET /api/usuarios-perfis/listar-perfis-usuario?idUsuario={UUID}
-
-Listar usuários de um perfil
-GET /api/usuarios-perfis/listar-usuarios-perfil?idPerfil={UUID}
+---
+Desenvolvido pela equipe Raitô Corp.
