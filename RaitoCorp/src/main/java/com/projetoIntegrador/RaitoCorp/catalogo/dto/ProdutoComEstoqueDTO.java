@@ -34,11 +34,7 @@ public class ProdutoComEstoqueDTO {
         this.precoOriginal = produto.getPrecoOriginal();
         this.imagemUrl = produto.getImagemUrl();
         this.quantidadeEstoque = quantidadeEstoque;
-        this.categorias = produto.getCategorias() != null
-            ? produto.getCategorias().stream()
-                .map(c -> c.getNome())
-                .collect(Collectors.toList())
-            : List.of();
+        this.categorias = List.of();
     }
 
     // Getters and Setters
