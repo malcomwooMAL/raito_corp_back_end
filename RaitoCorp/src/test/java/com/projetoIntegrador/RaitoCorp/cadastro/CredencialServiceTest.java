@@ -3,27 +3,28 @@ package com.projetoIntegrador.RaitoCorp.cadastro;
 import com.projetoIntegrador.RaitoCorp.cadastro.model.Credencial;
 import com.projetoIntegrador.RaitoCorp.cadastro.repository.CredencialRepository;
 import com.projetoIntegrador.RaitoCorp.cadastro.service.CredencialService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class CredencialServiceTest {
 
+    @Mock
     private CredencialRepository credencialRepository;
-    private CredencialService credencialService;
 
-    @BeforeEach
-    void setUp() {
-        credencialRepository = Mockito.mock(CredencialRepository.class);
-        credencialService = new CredencialService(credencialRepository);
-    }
+    @InjectMocks
+    private CredencialService credencialService;
 
     @Test
     void deveCriarCredencialComSenhaCriptografada() {
@@ -36,6 +37,7 @@ class CredencialServiceTest {
         Credencial resultado = credencialService.criarCredencial(credencial);
 
         assertNotNull(resultado.getSenhaHash());
+        assertNotEquals("123456", resultado.getSenhaHash()); // A senha deve ser hashada, não plain text
         assertTrue(BCrypt.checkpw("123456", resultado.getSenhaHash()));
         verify(credencialRepository, times(1)).save(any(Credencial.class));
     }
